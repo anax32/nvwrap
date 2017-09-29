@@ -22,7 +22,7 @@ public:
 		auto c_sz = out_C.dimensions();
 
 		float alpha = 1.0f;
-		float beta = 0.0f;
+		float beta = 0.0f;	// seems to have no effect
 
 		result_ = cublasSgemm(
 			cublas_context_,
