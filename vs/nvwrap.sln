@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matrix_transpose", "matrix_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matrix_scale", "matrix_scale.vcxproj", "{14578BEC-668C-4E9D-9570-D95AB20F1096}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matrix_subtraction", "matrix_subtraction.vcxproj", "{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -93,6 +95,10 @@ Global
 		{14578BEC-668C-4E9D-9570-D95AB20F1096}.Debug|x64.Build.0 = Debug|x64
 		{14578BEC-668C-4E9D-9570-D95AB20F1096}.Release|x64.ActiveCfg = Release|x64
 		{14578BEC-668C-4E9D-9570-D95AB20F1096}.Release|x64.Build.0 = Release|x64
+		{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}.Debug|x64.ActiveCfg = Debug|x64
+		{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}.Debug|x64.Build.0 = Debug|x64
+		{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}.Release|x64.ActiveCfg = Release|x64
+		{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
