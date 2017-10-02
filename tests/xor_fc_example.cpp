@@ -10,108 +10,12 @@
 #include "cublas_matrix_transpose.h"
 #include "cudnn_activation.h"
 #include "cudnn_transpose.h"
+#include "cudnn_matrix_addition.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <array>
-
-class cudnn_tensor_operation : public cudnn_result
-{
-protected:
-	cudnnHandle_t	cudnn_context_;
-	cudnnOpTensorDescriptor_t descriptor_;
-public:
-	cudnn_tensor_operation (cudnnHandle_t cudnn_context)
-		: cudnn_context_(cudnn_context)
-	{
-		result_ = cudnnCreateOpTensorDescriptor(
-			&descriptor_);
-	}
-	virtual ~cudnn_tensor_operation()
-	{
-		result_ = cudnnDestroyOpTensorDescriptor(
-			descriptor_);
-	}
-};
-
-template<typename T>
-class cudnn_multiply : public cudnn_tensor_operation,
-					   public cudnn_internal_type<T>
-{
-public:
-	cudnn_multiply(cudnnHandle_t cudnn_context)
-		: cudnn_tensor_operation(cudnn_context)
-	{
-		result = cudnnSetOpTensorDescriptor(
-			descriptor_,
-			CUDNN_OP_TENSOR_MUL,
-			internal_type(),
-			CUDNN_PROPAGATE_NAN);
-	}
-	template<typename T>
-	static auto get_output_size(const cudnn_tensor<T>& A, const cudnn_tensor<T>& B) -> std::vector < int >
-	{
-		auto A_size = A.dimensions();
-		auto B_size = B.dimensions();
-
-		// retain only the last two dimensions,
-		// we don't do general tensor multiplication yet
-		return std::vector<int> 
-		{
-			1,
-			1,
-			A_size[2],
-			B_size[3]
-		};
-	}
-	void mult(const cudnn_tensor<T>& A, const cudnn_tensor<T>& B, cudnn_tensor<T>& C)
-	{
-		float one = 1.0f;
-		float zero = 0.0f;
-
-		result = cudnnOpTensor(
-			cudnn_context_,
-			descriptor_,
-			&one, A, A.device_storage(),
-			&one, B, B.device_storage(),
-			&zero, C, C.device_storage());
-	}
-};
-
-template<typename T>
-class cudnn_add : public cudnn_tensor_operation,
-				  public cudnn_internal_type<T>
-{
-public:
-	cudnn_add(cudnnHandle_t cudnn_context)
-		: cudnn_tensor_operation(cudnn_context)
-	{
-		result_ = cudnnSetOpTensorDescriptor(
-			descriptor_,
-			CUDNN_OP_TENSOR_ADD,
-			internal_type(),
-			CUDNN_PROPAGATE_NAN);
-	}
-	void apply(const cudnn_tensor<T>& A, const cudnn_tensor<T>& B, cudnn_tensor<T>& C)
-	{
-#ifdef _DEBUG
-		auto a_sz = A.dimensions();
-		auto b_sz = B.dimensions();
-		auto c_sz = C.dimensions();
-#endif
-
-		float one = 1.0f;
-		float zero = 0.0f;
-
-		result_ = cudnnOpTensor(
-			cudnn_context_,
-			descriptor_,
-			&one, A, A.device_storage(),
-			&one, B, B.device_storage(),
-			&zero, C, C.device_storage());
-	}
-};
 
 template<typename T>
 class cudnn_scale : public cudnn_result
@@ -137,70 +41,6 @@ int main(int argc, char** argv)
 	cuda_initialise		cuda;
 	cudnn_initialise	cudnn;
 	cublas_initialise	cublas;
-
-	// cublas matrix multiplication of square matrices
-	{
-		cublas_matrix_multiply		matmul(cublas);
-		cudnn_tensor<float>			A(cudnn, { 1, 1, 2, 2 }, 1.0f);
-		cudnn_tensor<float>			B(cudnn, { 1, 1, 2, 2 }, 1.0f);
-		cudnn_tensor<float>			C(cudnn, { 1, 1, 2, 2 }, 0.0f);
-		std::vector<float>			h_C;
-
-		matmul.apply<float>(A, B, C);
-		C.get(h_C);
-
-		auto square_mult_correct = std::all_of(
-			std::begin(h_C),
-			std::end(h_C),
-			[](const float x){return x == 2.0f; });
-
-		if (square_mult_correct == false)
-		{
-			return 1;
-		}
-	}
-	// cublas matrix multiplcation of non-square matrices
-	{
-		cublas_matrix_multiply		matmul(cublas);
-		cudnn_tensor<float>			A(cudnn, { 1, 1, 4, 2 }, 1.0f);
-		cudnn_tensor<float>			B(cudnn, { 1, 1, 2, 3 }, 1.0f);
-		cudnn_tensor<float>			C(cudnn, matmul.get_output_size(A.dimensions(), B.dimensions()), 0.0f);
-		std::vector<float>			h_C;
-
-		matmul.apply<float>(A, B, C);
-		C.get(h_C);
-
-		auto wonky_mult_correct = std::all_of(
-			std::begin(h_C),
-			std::end(h_C),
-			[](const float x) { return x == 2.0f; });
-
-		if (wonky_mult_correct == false)
-		{
-			return 2;
-		}
-	}
-	// cudnn matrix addition
-	{
-		cudnn_tensor<float>		A(cudnn, { 1, 1, 8, 4 }, 1.0f);
-		cudnn_tensor<float>		B(cudnn, { 1, 1, 8, 4 }, 3.0f);
-		cudnn_tensor<float>		C(cudnn, { 1, 1, 8, 4 }, 0.0f);
-		std::vector<float>		h_C;
-
-		cudnn_add<float>		add(cudnn);
-		add.apply(A, B, C);
-		C.get(h_C);
-
-		auto add_correct = std::all_of(
-			std::begin(h_C),
-			std::end(h_C),
-			[](const float x) { return x == 4.0f; });
-
-		if (add_correct == false)
-		{
-			return 3;
-		}
-	}
 
 	// cudnn matrix transpose
 	{
@@ -276,11 +116,11 @@ int main(int argc, char** argv)
 
 		cudnn_tensor<float> l1(
 			cudnn,
-			cudnn_multiply<float>::get_output_size(X, syn0),
+			cublas_matrix_multiply::get_output_size(X.dimensions(), syn0.dimensions()),
 			0.0f);
 		cudnn_tensor<float> l2(
 			cudnn,
-			cudnn_multiply<float>::get_output_size(l1, syn1),
+			cublas_matrix_multiply::get_output_size(l1.dimensions(), syn1.dimensions()),
 			0.0f);
 
 		cudnn_tensor<float>	error(
@@ -304,7 +144,7 @@ int main(int argc, char** argv)
 
 		cublas_matrix_multiply	matmul(cublas);
 		cudnn_scale<float>		scale(cudnn);
-		cudnn_add<float>		add(cudnn);
+		cudnn_matrix_addition<float>		add(cudnn);
 		cudnn_transpose<float>	transpose(cudnn, cublas);
 
 

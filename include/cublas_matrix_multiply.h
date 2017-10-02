@@ -41,7 +41,7 @@ public:
 			c_sz[2]);
 	}
 
-	std::vector<int> get_output_size(const std::vector<int>& tensor_a_size, const std::vector<int>& tensor_b_size)
+	static std::vector<int> get_output_size(const std::vector<int>& tensor_a_size, const std::vector<int>& tensor_b_size)
 	{
 		std::vector<int>	out_dims;
 
