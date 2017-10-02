@@ -99,6 +99,12 @@
       <AdditionalDependencies>cuda.lib;cudart.lib;cudnn.lib;cublas.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>start /wait $(TargetPath)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>test run</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,6 +153,10 @@
       <AdditionalDependencies>cuda.lib;cudart.lib;cudnn.lib;cublas.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>start /wait $(TargetPath)</Command>
+      <Message>test run</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\tests\matrix_hadamard.cpp" />
