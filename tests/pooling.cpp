@@ -39,7 +39,7 @@ public:
 			descriptor_,
 			mode,
 			nan_propagation,
-			size.size(),
+			static_cast<int>(size.size()),
 			size.data(),
 			padding.data(),
 			stride.data());

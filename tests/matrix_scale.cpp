@@ -6,31 +6,12 @@
 #include "cudnn_initialise.h"
 #include "cublas_initialise.h"
 #include "cudnn_tensor.h"
-#include "cudnn_result.h"
+#include "cudnn_matrix_scale.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <array>
-
-template<typename T>
-class cudnn_scale : public cudnn_result
-{
-protected:
-	cudnnHandle_t	cudnn_context_;
-public:
-	cudnn_scale(cudnnHandle_t cudnn_context)
-		: cudnn_context_(cudnn_context)
-	{}
-	void apply(const cudnn_tensor<T>& input, const T scale)
-	{
-		result_ = cudnnScaleTensor(
-			cudnn_context_,
-			input,
-			input.device_storage(),
-			&scale);
-	}
-};
 
 int main(int argc, char** argv)
 {
@@ -39,9 +20,9 @@ int main(int argc, char** argv)
 	cublas_initialise	cublas;
 
 	{
-		cudnn_scale<float>	scale(cudnn);
-		cudnn_tensor<float>	A(cudnn, { 1,1,3,4 }, 1.0f);
-		std::vector<float>	h_A;
+		cudnn_matrix_scale<float>	scale(cudnn);
+		cudnn_tensor<float>			A(cudnn, { 1,1,3,4 }, 1.0f);
+		std::vector<float>			h_A;
 
 		// preconditions
 		A.get(h_A);

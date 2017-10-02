@@ -9,59 +9,20 @@
 #include "cublas_matrix_multiply.h"
 #include "cublas_matrix_transpose.h"
 #include "cudnn_activation.h"
-#include "cudnn_transpose.h"
+#include "cudnn_matrix_transpose.h"
 #include "cudnn_matrix_addition.h"
+#include "cudnn_matrix_scale.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <array>
 
-template<typename T>
-class cudnn_scale : public cudnn_result
-{
-protected:
-	cudnnHandle_t	cudnn_context_;
-public:
-	cudnn_scale(cudnnHandle_t cudnn_context)
-		: cudnn_context_(cudnn_context)
-	{}
-	void apply(const cudnn_tensor<T>& input, const T scale)
-	{
-		result_ = cudnnScaleTensor(
-			cudnn_context_,
-			input,
-			input.device_storage(),
-			&scale);
-	}
-};
-
 int main(int argc, char** argv)
 {
 	cuda_initialise		cuda;
 	cudnn_initialise	cudnn;
 	cublas_initialise	cublas;
-
-	// cudnn matrix transpose
-	{
-		cudnn_tensor<float>		A(cudnn, { 1, 1, 6, 3 }, 1.0f);
-		cudnn_tensor<float>		B(cudnn, { 1, 1, 3, 6 }, 0.0f);
-		std::vector<float>		h_B;
-
-		cudnn_transpose<float>	transpose(cudnn, cublas);
-		transpose.apply(A, B);
-		B.get(h_B);
-
-		auto transpose_correct = std::all_of(
-			std::begin(h_B),
-			std::end(h_B),
-			[](const float x) {return x == 1.0f; });
-
-		if (transpose_correct == false)
-		{
-			return 4;
-		}
-	}
 
 	// NN learning XOR function
 	{
@@ -142,10 +103,10 @@ int main(int argc, char** argv)
 			CUDNN_PROPAGATE_NAN,
 			1.0f);
 
-		cublas_matrix_multiply	matmul(cublas);
-		cudnn_scale<float>		scale(cudnn);
-		cudnn_matrix_addition<float>		add(cudnn);
-		cudnn_transpose<float>	transpose(cudnn, cublas);
+		cublas_matrix_multiply			matmul(cublas);
+		cudnn_matrix_scale<float>		scale(cudnn);
+		cudnn_matrix_addition<float>	add(cudnn);
+		cudnn_matrix_transpose<float>	transpose(cudnn, cublas);
 
 
 		//for (auto i = 0; i < 60000; i++)

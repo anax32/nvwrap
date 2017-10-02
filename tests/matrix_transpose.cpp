@@ -7,7 +7,7 @@
 #include "cublas_initialise.h"
 #include "cudnn_tensor.h"
 #include "cublas_matrix_transpose.h"
-#include "cudnn_transpose.h"
+#include "cudnn_matrix_transpose.h"
 
 #include <iostream>
 #include <fstream>
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 		cudnn_tensor<float>		B(cudnn, { 1, 1, 3, 6 }, 0.0f);
 		std::vector<float>		h_B;
 
-		cudnn_transpose<float>	transpose(cudnn, cublas);
+		cudnn_matrix_transpose<float>	transpose(cudnn, cublas);
 		transpose.apply(A, B);
 		B.get(h_B);
 
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 			return 5;
 		}
 	
-		cudnn_transpose<float>	transpose(cudnn, cublas);
+		cudnn_matrix_transpose<float>	transpose(cudnn, cublas);
 		transpose.apply(A, B);
 
 		// check post-conditions
