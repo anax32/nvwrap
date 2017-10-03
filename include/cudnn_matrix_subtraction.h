@@ -17,9 +17,18 @@ public:
 	{}
 	template<typename T>
 	void apply(const cudnn_tensor<T>& A,
-		const cudnn_tensor<T>& B,
-		cudnn_tensor<T>& C)
+		       const cudnn_tensor<T>& B,
+		       cudnn_tensor<T>& C)
 	{
+		// FIXME: this does not work because the add operation
+		// reads and writes to the tensor C, which causes
+		// cudnnOpTensor to fail
+		// (see: http://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnOpTensor)
+		// we must find a way to negate B and perform A+B
+		// without overwriting the contents of A or B.
+		// (unless we overwrite and restore at the end?)
+		throw std::exception("not implemented");
+#if 0
 		// copy B in to C
 		cudaMemcpy(
 			C.device_storage(),
@@ -31,9 +40,10 @@ public:
 		scale.apply(C, -1.0f);
 
 		// add A to C and store the result in C
-		add.apply(C, A, C);
+		add.apply(A, C, C);
 
 		// C now contains A-B
+#endif
 	}
 };
 #endif
