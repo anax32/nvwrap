@@ -82,10 +82,12 @@
       <AdditionalDependencies>cuda.lib;cudnn.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>start /wait $(TargetPath)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>test run</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Tests|x64'">

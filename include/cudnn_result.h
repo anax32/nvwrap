@@ -27,6 +27,11 @@ public:
 	{
 		return result_;
 	}
+
+  operator bool () const
+  {
+      return result () == CUDNN_STATUS_SUCCESS;
+  }
 };
 
 std::map<cudnnStatus_t, const char*> cudnn_result::cudnn_error_codes = {

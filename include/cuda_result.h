@@ -12,5 +12,9 @@ public:
 	{
 		return result_;
 	}
+  operator bool () const
+  {
+      return result () == CUDA_SUCCESS;
+  }
 };
 #endif

@@ -16,9 +16,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{CF42E495-C6DF-4F0D-A178-A3FBCBB3B2BB}</ProjectGuid>
+    <ProjectGuid>{E35D7E3F-9D2C-4D14-B577-1D8DFBD80311}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>matrix_subtraction</RootNamespace>
+    <RootNamespace>cuda_program</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -62,6 +62,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Tests|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -78,17 +79,9 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cuda.lib;cudart.lib;cudnn.lib;cublas.lib</AdditionalDependencies>
+      <AdditionalDependencies>cuda.lib;cudart.lib;nvrtc.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\;$(CUDA_PATH)\nvvm\lib\$(Platform)\</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>
-      </Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Tests|x64'">
     <ClCompile>
@@ -101,8 +94,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cuda.lib;cudart.lib;cudnn.lib;cublas.lib</AdditionalDependencies>
+      <AdditionalDependencies>cuda.lib;cudart.lib;nvrtc.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\;$(CUDA_PATH)\nvvm\lib\$(Platform)\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>start /wait $(TargetPath)</Command>
@@ -126,18 +119,12 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cuda.lib;cudart.lib;cudnn.lib;cublas.lib</AdditionalDependencies>
+      <AdditionalDependencies>cuda.lib;cudart.lib;nvrtc.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\$(Platform)\;$(CUDA_PATH)\nvvm\lib\$(Platform)\</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>start /wait $(TargetPath)</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>test run</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\tests\matrix_subtraction.cpp" />
+    <ClCompile Include="..\tests\cuda_program.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
