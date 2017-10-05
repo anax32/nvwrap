@@ -1,14 +1,13 @@
 #include <cuda.h>
 #include <cudnn.h>
-#include <cublas_v2.h>
+
+#include <iostream>
 
 #include "cuda_initialise.h"
-#include "cudnn_initialise.h"
-#include "cublas_initialise.h"
+#include "cuda_matrix_subtraction.h"
 
+#include "cudnn_initialise.h"
 #include "cudnn_tensor.h"
-#include "cudnn_tensor_operation.h"
-#include "cudnn_matrix_subtraction.h"
 
 #include <iostream>
 #include <fstream>
@@ -31,7 +30,7 @@ int main(int argc, char** argv)
 		B.get(h_B);
 		C.get(h_C);
 
-		cudnn_matrix_subtraction<float>		sub(cudnn);
+		cuda_matrix_subtraction<float>		sub(cudnn);
 		sub.apply(A, B, C);
 
 		A.get(h_A);
@@ -56,7 +55,7 @@ int main(int argc, char** argv)
 		cudnn_tensor<float>		C(cudnn, { 1, 1, 8, 4 }, 0.0f);
 		std::vector<float>		h_C;
 
-		cudnn_matrix_subtraction<float>		sub(cudnn);
+		cuda_matrix_subtraction<float>		sub(cudnn);
 		sub.apply(A, B, C);
 		C.get(h_C);
 
@@ -73,14 +72,14 @@ int main(int argc, char** argv)
 
 	// cudnn matrix subtraction (counter - counter == 0.0f)
 	{
-		auto counter = [i = 0]() mutable {return i++; };
+		auto counter = [i = 0.0f]() mutable {return i+=1.0f; };
 
 		cudnn_tensor<float>		A(cudnn, { 1, 1, 8, 4 }, counter);
 		cudnn_tensor<float>		B(cudnn, { 1, 1, 8, 4 }, counter);
 		cudnn_tensor<float>		C(cudnn, { 1, 1, 8, 4 }, 0.0f);
 		std::vector<float>		h_C;
 
-		cudnn_matrix_subtraction<float>		sub(cudnn);
+		cuda_matrix_subtraction<float>		sub(cudnn);
 		sub.apply(A, B, C);
 		C.get(h_C);
 
@@ -99,24 +98,25 @@ int main(int argc, char** argv)
 	{
 		auto counter = [i = 0]() mutable {return i++; };
 
-		cudnn_tensor<float>		A(cudnn, { 1, 1, 8, 4 }, 0.0f);
-		cudnn_tensor<float>		B(cudnn, { 1, 1, 8, 4 }, 0.0f);
-		cudnn_tensor<float>		C(cudnn, { 1, 1, 8, 4 }, 0.0f);
-		cudnn_tensor<float>		exp(cudnn, { 1, 1, 8, 4 }, 0.0f);
-		std::vector<float>		h_C;
+		cudnn_tensor<float>		A(cudnn, { 1, 1, 1, 4 }, 0.0f);
+		cudnn_tensor<float>		B(cudnn, { 1, 1, 1, 4 }, 0.0f);
+		cudnn_tensor<float>		C(cudnn, { 1, 1, 1, 4 }, 0.0f);
+		cudnn_tensor<float>		exp(cudnn, { 1, 1, 1, 4 }, 0.0f);
+		std::vector<float>		h_C, h_exp;
 
 		A.set<float>({ 0.0f, 1.0f, 1.0f, 0.0f });
 		B.set<float>({ 1.0f, 1.0f, 1.0f, 1.0f });
 		exp.set<float>({ -1.0f, 0.0f, 0.0f, -1.0f });
 
-		cudnn_matrix_subtraction<float>		sub(cudnn);
+		cuda_matrix_subtraction<float>		sub(cudnn);
 		sub.apply(A, B, C);
 		C.get(h_C);
+    exp.get(h_exp);
 
-		auto sub_correct = std::all_of(
+		auto sub_correct = std::equal(
 			std::begin(h_C),
 			std::end(h_C),
-			[](const float x) { return x == 0.0f; });
+			std::begin(h_exp));
 
 		if (sub_correct == false)
 		{

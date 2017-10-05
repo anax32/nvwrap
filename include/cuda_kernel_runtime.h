@@ -8,7 +8,8 @@
 class cuda_kernel_runtime : public cuda_kernel
 {
 public:
-    cuda_kernel_runtime (std::string src, const std::initializer_list<std::string>& entry_point_names)
+    cuda_kernel_runtime (const std::string& src,
+                         const std::initializer_list<const char *>& entry_point_names)
     {
         nvrtc_program compilation (src);
 
@@ -28,7 +29,9 @@ public:
         else
         {
             // get log?
-            // compilation.get_log ()
+#ifdef _IOSTREAM_
+            std::cerr << compilation.get_log().c_str() << std::endl;
+#endif
         }
     }
     virtual ~cuda_kernel_runtime ()

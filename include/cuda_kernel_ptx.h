@@ -7,7 +7,7 @@
 class cuda_kernel_ptx : public cuda_kernel
 {
 public:
-    cuda_kernel_ptx (std::string ptx_filename, const std::initializer_list<std::string>& entry_point_names)
+    cuda_kernel_ptx (std::string ptx_filename, const std::initializer_list<const char *>& entry_point_names)
     {
         result_ = cuModuleLoad (&module_, ptx_filename.c_str ());
 
