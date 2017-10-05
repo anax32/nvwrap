@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
 	// cublas matrix transpose ascending value matrix
 	{
-		int i = 0;
+		auto i = 0.0f;
 		auto counter = [&i]() mutable {return i++; };
 		cudnn_tensor<float>		A(cudnn, { 1,1,3,3 }, counter);
 		cudnn_tensor<float>		B(cudnn, { 1,1,3,3 }, 0.0f);
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 		A.get(h_A);
 		B.get(h_B);
 
-		i = 0;
+		i = 0.0f;
 		auto A_is_incrementing = std::all_of(
 			std::begin(h_A),
 			std::end(h_A),
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 			[](const float x) {return x == 0.0f; });
 
 		if ((A_is_incrementing == false) ||
-			(B_is_zero == false))
+			  (B_is_zero == false))
 		{
 			return 2;
 		}
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 		A.get(h_A);
 		B.get(h_B);
 
-		i = 0;
+		i = 0.0f;
 		auto A_still_incrementing = std::all_of(
 			std::begin(h_A),
 			std::end(h_A),
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 			std::begin(h_exp));
 
 		if ((A_still_incrementing == false) ||
-			(B_is_exp == false))
+			  (B_is_exp == false))
 		{
 			return 3;
 		}
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 
 	// cudnn matrix transpose ascending value matrix
 	{
-		int i = 0;
+		auto i = 0.0f;
 		auto counter = [&i]() mutable {return i++; };
 		cudnn_tensor<float>		A(cudnn, { 1,1,3,3 }, counter);
 		cudnn_tensor<float>		B(cudnn, { 1,1,3,3 }, 0.0f);
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 		A.get(h_A);
 		B.get(h_B);
 
-		i = 0;
+		i = 0.0f;
 		auto A_is_incrementing = std::all_of(
 			std::begin(h_A),
 			std::end(h_A),
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 			[](const float x) {return x == 0.0f; });
 
 		if ((A_is_incrementing == false) ||
-			(B_is_zero == false))
+			  (B_is_zero == false))
 		{
 			return 5;
 		}
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
 		A.get(h_A);
 		B.get(h_B);
 
-		i = 0;
+		i = 0.0f;
 		auto A_still_incrementing = std::all_of(
 			std::begin(h_A),
 			std::end(h_A),
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 			std::begin(h_exp));
 
 		if ((A_still_incrementing == false) ||
-			(B_is_exp == false))
+			  (B_is_exp == false))
 		{
 			return 6;
 		}

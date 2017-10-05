@@ -32,7 +32,10 @@ int main(int argc, char** argv)
 		if (std::all_of(
 			std::begin(test_results),
 			std::end(test_results),
-			[](bool b) {return b == true; }) == false)
+			[](const bool b)
+      {
+        return b == true;
+      }) == false)
 		{
 			return 1;
 		}
@@ -56,7 +59,10 @@ int main(int argc, char** argv)
 		if (std::all_of(
 			std::begin(test_results),
 			std::end(test_results),
-			[](bool b) {return b == true; }) == false)
+			[](const bool b)
+      {
+        return b == true;
+      }) == false)
 		{
 			return 2;
 		}
@@ -72,23 +78,53 @@ int main(int argc, char** argv)
 		std::vector<float>	send(tensor.count());
 		std::vector<float>	recv(send.size());
 		unsigned int		i = 0;
-		std::generate(std::begin(send), std::end(send), [&i](){return ++i; });
-		std::fill(std::begin(recv), std::end(recv), 1.0f);
+		std::generate(
+        std::begin(send),
+        std::end(send),
+        [&i]()
+        {
+            return static_cast<float>(++i);
+        });
+
+		std::fill(
+        std::begin(recv),
+        std::end(recv),
+        1.0f);
 
 		// send it to the device and read it back
-		auto read_mismatch = !std::equal(std::begin(recv), std::end(recv), std::begin(send));
+		auto read_mismatch = !std::equal(
+        std::begin(recv),
+        std::end(recv),
+        std::begin(send));
+
 		tensor.set(send);
 		tensor.get(recv);
-		auto read_match = std::equal(std::begin(recv), std::end(recv), std::begin(send));
+		auto read_match = std::equal(
+        std::begin(recv),
+        std::end(recv),
+        std::begin(send));
 
 		// clear the tensor on the device
 		tensor.fill(1.0f);
 
 		// read back the tensor with the fill values
 		std::fill(std::begin(recv), std::end(recv), 0.0f);
-		auto all_zero = std::count_if(std::begin(recv), std::end(recv), [](float x){return x == 0.0f; }) == recv.size();
+		auto all_zero = std::count_if(
+        std::begin(recv),
+        std::end(recv),
+        [](float x)
+        {
+            return x == 0.0f;
+        }) == recv.size();
+
 		tensor.get(recv);
-		auto all_ones = std::count_if(std::begin(recv), std::end(recv), [](float x){return x == 1.0f; }) == recv.size();
+		auto all_ones = std::count_if(
+        std::begin(recv),
+        std::end(recv),
+        [](float x)
+        {
+            return x == 1.0f;
+        }) == recv.size();
 
 		auto test_results = {
 			read_mismatch == true,
@@ -100,7 +136,10 @@ int main(int argc, char** argv)
 		if (std::all_of(
 			std::begin(test_results),
 			std::end(test_results),
-			[](bool b) {return b == true; }) == false)
+			[](const bool b)
+      {
+        return b == true;
+      }) == false)
 		{
 			return 3;
 		}

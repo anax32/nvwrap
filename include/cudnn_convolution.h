@@ -33,7 +33,7 @@ public:
 #if 1
 		result_ = cudnnSetConvolutionNdDescriptor(
 			descriptor_,
-			input_padding.size(),
+			static_cast<unsigned int>(input_padding.size()),
 			input_padding.data(),
 			filter_stride.data(),
 			dilation.data(),
@@ -68,7 +68,7 @@ public:
 #ifdef _DEBUG
 		int					dummy;
 		cudnnDataType_t		filter_type, input_type, conv_type;
-		cudnnTensorFormat_t	filter_format, input_format;
+		cudnnTensorFormat_t	filter_format;
 		int					filter_dims, input_dims, conv_dims;
 		cudnnConvolutionMode_t	conv_mode;
 		std::vector<int>	filter_shape, input_shape, input_stride;
@@ -225,7 +225,7 @@ public:
 			filter,
 			convolution,
 			output_tensor,
-			algorithms.size(),
+			static_cast<unsigned int>(algorithms.size()),
 			&result_size,
 			algorithms.data());
 
@@ -348,7 +348,7 @@ public:
 			diff_tensor,
 			convolution,
 			filter,
-			algorithms.size(),
+			static_cast<unsigned int>(algorithms.size()),
 			&result_size,
 			algorithms.data());
 
@@ -433,7 +433,7 @@ public:
 			diff_tensor,
 			convolution,
 			output_tensor,
-			algorithms.size(),
+			static_cast<unsigned int>(algorithms.size()),
 			&result_size,
 			algorithms.data());
 

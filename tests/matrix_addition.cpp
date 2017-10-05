@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
 	// cudnn matrix addition (counter+counter = 2*counter)
 	{
-		int i = 0;
+		auto i = 0.0f;
 		auto counter = [&i]()mutable {return i++; };
 
 		cudnn_tensor<float>		A(cudnn, { 1, 1, 8, 4 }, counter);
@@ -58,8 +58,7 @@ int main(int argc, char** argv)
 		add.apply(A, B, C);
 		C.get(h_C);
 
-		i = 0;
-
+		i = 0.0f;
 		auto add_correct = std::all_of(
 			std::begin(h_C),
 			std::end(h_C),
