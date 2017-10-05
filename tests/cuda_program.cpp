@@ -1,12 +1,6 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 
-#include <vector>
-#include <iostream>
-#include <iterator>
-#include <map>
-#include <algorithm>
-
 #include "cuda_initialise.h"
 #include "cuda_kernel_ptx.h"
 #include "cuda_kernel_runtime.h"

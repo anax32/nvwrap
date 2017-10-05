@@ -1,5 +1,9 @@
 #include "cuda_result.h"
 
+#include <map>
+#include <algorithm>
+#include <iterator>
+
 #ifndef CUDA_KERNEL_H
 #define CUDA_KERNEL_H
 class cuda_kernel : public cuda_result
