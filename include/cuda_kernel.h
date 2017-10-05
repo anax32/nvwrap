@@ -1,5 +1,6 @@
 #include "cuda_result.h"
 
+#include <vector>
 #include <map>
 #include <algorithm>
 #include <iterator>
@@ -37,10 +38,16 @@ public:
         cuModuleUnload (module_);
         module_ = NULL;
     }
+    // execution a kernel by calling function_name
+    // and passing params to each invocation.
+    // The number of invocations is given by a vector,
+    // this should correspond to the number of threads-per-block
+    // FIXME: currently only invocation[0] is read, and there
+    // is no communication of block_size from/to the caller.
     template<typename T>
     void apply(const std::string& function_name,
                std::initializer_list<T> params,
-               size_t invocations)
+               const std::vector<unsigned int>& invocations)
     {
         // get the function
         auto fn = entry_points.begin()->second;
@@ -63,7 +70,7 @@ public:
         // ultimately, the caller should have control of this
         // information.
         const size_t block_size = 512;
-        auto nblocks = std::max (invocations / block_size, size_t(1));
+        auto nblocks = std::max (invocations[0] / block_size, size_t(1));
 
         // run the kernel
         result_ = cuLaunchKernel(
@@ -95,7 +102,7 @@ public:
     }
     template<typename T>
     void apply(std::initializer_list<T> params, 
-               size_t invocations)
+               const std::vector<unsigned int>& invocations)
     {
         apply(
             entry_points.begin()->first,

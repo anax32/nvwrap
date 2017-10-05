@@ -30,7 +30,7 @@ public:
                 C.device_storage(),
                 (void*)A.count()
             },
-            A.count());
+            {static_cast<unsigned int>(A.count())});
     }
 };
 

@@ -39,7 +39,7 @@ int main (int argc, char** argv)
       void *args[] = { &d_A, &d_B, };
 
       // run the kernel
-      k.apply ({ d_A, d_B }, 1);
+      k.apply ({ d_A, d_B }, { 1 });
 
       if (k == false)
       {
@@ -77,7 +77,7 @@ int main (int argc, char** argv)
       void *args[] = { &d_A, &d_B, };
 
       // run the kernel
-      ptx_k.apply ({ d_A, d_B }, 1);
+      ptx_k.apply ({ d_A, d_B }, { 1 });
 
       if (ptx_k == false)
       {
